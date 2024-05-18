@@ -4,6 +4,7 @@ import { RadioGroup } from "@headlessui/react";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import NextImage from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 
@@ -28,7 +29,6 @@ import {
   MATERIALS,
   MODELS,
 } from "@/validators/option-validator";
-import { useRouter } from "next/navigation";
 import { SaveConfigArgs, saveConfig as _saveConfig } from "./actions";
 
 interface DesignConfiguratorProps {
