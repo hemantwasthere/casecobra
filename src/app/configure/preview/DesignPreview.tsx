@@ -1,15 +1,19 @@
 "use client";
 
 import { Configuration } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Confetti from "react-dom-confetti";
 
 import Phone from "@/components/Phone";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { BASE_PRICE, PRODUCT_PRICES } from "@/config/product";
 import { cn, formatPrice } from "@/lib/utils";
 import { COLORS, MODELS } from "@/validators/option-validator";
+import { createCheckoutSession } from "./actions";
 
 interface DesignPreviewProps {
   configuration: Configuration;
@@ -19,6 +23,10 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => setShowConfetti(true), []);
+
+  const router = useRouter();
+
+  const { toast } = useToast();
 
   const { color, model, finish, material } = configuration;
 
@@ -30,12 +38,27 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
     (supportedModels) => supportedModels.value === model
   )?.label;
 
-  let totalPrice = BASE_PRICE;
+  let totalPrice =
+    (BASE_PRICE +
+      PRODUCT_PRICES.material[material!] +
+      PRODUCT_PRICES.finish[finish!]) /
+    100;
 
-  if (finish === "textured") totalPrice += PRODUCT_PRICES.finish.textured;
-
-  if (material === "polycarbonate")
-    totalPrice += PRODUCT_PRICES.material.polycarbonate;
+  const { mutate: createPaymentSession, isPending } = useMutation({
+    mutationKey: ["get-checkout-session"],
+    mutationFn: createCheckoutSession,
+    onSuccess: ({ url }) => {
+      if (url) router.push(url);
+      else throw new Error("Unable to retrieve payment URL");
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong",
+        description: "There was an error on our end. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
 
   return (
     <>
@@ -124,15 +147,23 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
                 <div className="flex items-center justify-between py-2">
                   <p className="font-semibold text-gray-900">Order total</p>
                   <p className="font-semibold text-gray-900">
-                    {formatPrice(totalPrice / 100)}
+                    {formatPrice(totalPrice)}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 flex justify-end pb-12">
-              <Button className="px-4 sm:px-6 lg:px-8">
-                Checkout <ArrowRight className="h-4 w-4 ml-1.5 inline" />
+            <div className="mt-2 2xl:mt-8 flex justify-end pb-12">
+              <Button
+                onClick={() =>
+                  createPaymentSession({ configId: configuration.id })
+                }
+                isLoading={isPending}
+                disabled={isPending}
+                className="px-4 sm:px-6 lg:px-8"
+              >
+                Checkout{" "}
+                {!isPending && <ArrowRight className="h-4 w-4 ml-1.5 inline" />}
               </Button>
             </div>
           </div>

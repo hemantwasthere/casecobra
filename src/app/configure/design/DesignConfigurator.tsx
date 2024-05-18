@@ -72,7 +72,7 @@ const DesignConfigurator: React.FC<DesignConfiguratorProps> = ({
   const { toast } = useToast();
   const router = useRouter();
 
-  const { mutate: saveConfig } = useMutation({
+  const { mutate: saveConfig, isPending } = useMutation({
     mutationKey: ["save-config"],
     mutationFn: async (args: SaveConfigArgs) => {
       await Promise.all([saveConfiguration(), _saveConfig(args)]);
@@ -409,11 +409,13 @@ const DesignConfigurator: React.FC<DesignConfiguratorProps> = ({
                     model: options.model.value,
                   })
                 }
+                isLoading={isPending}
+                disabled={isPending}
                 size="sm"
                 className="w-full"
               >
                 Continue
-                <ArrowRight className="h-4 w-4 ml-1.5 inline" />
+                {!isPending && <ArrowRight className="h-4 w-4 ml-1.5 inline" />}
               </Button>
             </div>
           </div>
