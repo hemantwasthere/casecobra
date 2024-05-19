@@ -1,5 +1,6 @@
 "use client";
 
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { Configuration } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, Check } from "lucide-react";
@@ -7,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Confetti from "react-dom-confetti";
 
+import LoginModal from "@/components/LoginModal";
 import Phone from "@/components/Phone";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -20,15 +22,17 @@ interface DesignPreviewProps {
 }
 
 const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  useEffect(() => setShowConfetti(true), []);
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+  const [isLoginModelOpen, setIsLoginModelOpen] = useState<boolean>(false);
 
   const router = useRouter();
+  const { user } = useKindeBrowserClient();
 
   const { toast } = useToast();
 
-  const { color, model, finish, material } = configuration;
+  useEffect(() => setShowConfetti(true), []);
+
+  const { id, color, model, finish, material } = configuration;
 
   const tw = COLORS.find(
     (supportedColor) => supportedColor.value === color
@@ -60,6 +64,15 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
     },
   });
 
+  const handleCheckout = () => {
+    if (user) {
+      createPaymentSession({ configId: id });
+    } else {
+      localStorage.setItem("configurationId", id);
+      setIsLoginModelOpen(true);
+    }
+  };
+
   return (
     <>
       <div
@@ -74,6 +87,8 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
           }}
         />
       </div>
+
+      <LoginModal isOpen={isLoginModelOpen} setIsOpen={setIsLoginModelOpen} />
 
       <div className="mt-20 grid grid-cols-1 text-sm sm:grid-cols-12 sm:grid-rows-1 sm:gap-x-6 md:gap-x-8 lg:gap-x-12">
         <div className="sm:col-span-4 md:col-span-3 md:row-span-2 md:row-end-2">
@@ -155,9 +170,7 @@ const DesignPreview: React.FC<DesignPreviewProps> = ({ configuration }) => {
 
             <div className="mt-2 2xl:mt-8 flex justify-end pb-12">
               <Button
-                onClick={() =>
-                  createPaymentSession({ configId: configuration.id })
-                }
+                onClick={handleCheckout}
                 isLoading={isPending}
                 disabled={isPending}
                 className="px-4 sm:px-6 lg:px-8"
