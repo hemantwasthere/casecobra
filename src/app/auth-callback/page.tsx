@@ -1,11 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { NextPage } from "next";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { getAuthStatus } from "./actions";
 
 const Page: NextPage = () => {
