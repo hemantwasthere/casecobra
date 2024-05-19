@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     );
 
     if (event.type === "checkout.session.completed") {
-      if (event.data.object.customer_details?.email) {
+      if (!event.data.object.customer_details?.email) {
         throw new Error("Missing user email");
       }
 
