@@ -7,7 +7,7 @@ import OrderReceivedEmail from "@/components/emails/OrderReceivedEmail";
 import { db } from "@/db";
 import { stripe } from "@/lib/stripe";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {

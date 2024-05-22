@@ -56,5 +56,6 @@ export function constructMetadata({
       creator: "@hemantwasthere",
     },
     icons,
+    metadataBase: new URL("https://casecobraaa.vercel.app/"),
   };
 }
