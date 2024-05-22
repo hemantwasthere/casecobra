@@ -411,6 +411,7 @@ const DesignConfigurator: React.FC<DesignConfiguratorProps> = ({
                 }
                 isLoading={isPending}
                 disabled={isPending}
+                loadingText="Saving"
                 size="sm"
                 className="w-full"
               >

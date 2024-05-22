@@ -107,7 +107,7 @@ const ThankYou: React.FC = () => {
                 <address className="not-italic">
                   <span className="block">{billingAddress?.name}</span>
                   <span className="block">
-                    {shippingAddress?.street.replace("null", "")}
+                    {billingAddress?.street.replace("null", "")}
                   </span>
                   <span className="block">
                     {billingAddress?.postalCode} {billingAddress?.city}
