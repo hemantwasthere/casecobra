@@ -92,7 +92,9 @@ const ThankYou: React.FC = () => {
               <div className="mt-2 text-zinc-700">
                 <address className="not-italic">
                   <span className="block">{shippingAddress?.name}</span>
-                  <span className="block">{shippingAddress?.street}</span>
+                  <span className="block">
+                    {shippingAddress?.street.replace("null", "")}
+                  </span>
                   <span className="block">
                     {shippingAddress?.postalCode} {shippingAddress?.city}
                   </span>
@@ -104,7 +106,9 @@ const ThankYou: React.FC = () => {
               <div className="mt-2 text-zinc-700">
                 <address className="not-italic">
                   <span className="block">{billingAddress?.name}</span>
-                  <span className="block">{billingAddress?.street}</span>
+                  <span className="block">
+                    {shippingAddress?.street.replace("null", "")}
+                  </span>
                   <span className="block">
                     {billingAddress?.postalCode} {billingAddress?.city}
                   </span>

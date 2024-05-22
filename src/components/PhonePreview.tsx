@@ -15,12 +15,12 @@ const PhonePreview: React.FC<PhonePreviewProps> = ({
   croppedImageUrl,
   color,
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-
   const [renderedDimensions, setRenderedDimensions] = useState({
     height: 0,
     width: 0,
   });
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const handleResize = () => {
     if (!ref.current) return;
